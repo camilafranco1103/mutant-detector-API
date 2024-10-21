@@ -47,29 +47,28 @@ public class MutantDetector {
         int n = dna.length;
         int count = 0;
 
-        // Check horizontal sequences
-        for (String row : dna) {
-            if (checkSequence(row)) {
-                count++;
-            }
-        }
-
-        // Check vertical sequences
-        for (int col = 0; col < n; col++) {
-            StringBuilder vertical = new StringBuilder();
-            for (int row = 0; row < n; row++) {
-                vertical.append(dna[row].charAt(col));
-            }
-            if (checkSequence(vertical.toString())) {
-                count++;
-            }
-        }
-
-        // Check diagonal sequences
-        for (int i = 0; i < n - 3; i++) {
-            for (int j = 0; j < n - 3; j++) {
-                if (checkDiagonal(dna, i, j, 1, 1) || checkDiagonal(dna, i, j, 1, -1)) {
-                    count++;
+        // Check horizontal, vertical, and diagonal sequences
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (j + 3 < n) {
+                    if (checkSequence(dna[i].substring(j, j + 4))) {
+                        count++;
+                    }
+                }
+                if (i + 3 < n) {
+                    if (checkSequence(dna[i].charAt(j) + "" + dna[i + 1].charAt(j) + "" + dna[i + 2].charAt(j) + "" + dna[i + 3].charAt(j))) {
+                        count++;
+                    }
+                    if (j + 3 < n) {
+                        if (checkSequence(dna[i].charAt(j) + "" + dna[i + 1].charAt(j + 1) + "" + dna[i + 2].charAt(j + 2) + "" + dna[i + 3].charAt(j + 3))) {
+                            count++;
+                        }
+                    }
+                    if (j - 3 >= 0) {
+                        if (checkSequence(dna[i].charAt(j) + "" + dna[i + 1].charAt(j - 1) + "" + dna[i + 2].charAt(j - 2) + "" + dna[i + 3].charAt(j - 3))) {
+                            count++;
+                        }
+                    }
                 }
             }
         }
@@ -78,31 +77,6 @@ public class MutantDetector {
     }
 
     private boolean checkSequence(String seq) {
-        for (int i = 0; i < seq.length() - 3; i++) {
-            if (seq.charAt(i) == seq.charAt(i + 1) && seq.charAt(i) == seq.charAt(i + 2) && seq.charAt(i) == seq.charAt(i + 3)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean checkDiagonal(String[] dna, int startRow, int startCol, int rowIncrement, int colIncrement) {
-        int n = dna.length;
-        for (int i = 0; i < n - 3; i++) {
-            int row = startRow + i * rowIncrement;
-            int col = startCol + i * colIncrement;
-            if (row >= n || col >= n || col < 0) {
-                break;
-            }
-            if (row + 3 * rowIncrement >= n || col + 3 * colIncrement >= n || col + 3 * colIncrement < 0) {
-                break;
-            }
-            if (dna[row].charAt(col) == dna[row + rowIncrement].charAt(col + colIncrement) &&
-                    dna[row].charAt(col) == dna[row + 2 * rowIncrement].charAt(col + 2 * colIncrement) &&
-                    dna[row].charAt(col) == dna[row + 3 * rowIncrement].charAt(col + 3 * colIncrement)) {
-                return true;
-            }
-        }
-        return false;
+        return seq.charAt(0) == seq.charAt(1) && seq.charAt(1) == seq.charAt(2) && seq.charAt(2) == seq.charAt(3);
     }
 }
